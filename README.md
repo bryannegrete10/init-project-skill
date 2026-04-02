@@ -6,8 +6,8 @@ A global Claude Code skill that bootstraps **any project** with a self-learning 
 
 When you run `/init-project` in any directory, Claude will:
 
-1. Ask about your project (name, stack, design philosophy, phases)
-2. Read your actual codebase
+1. **Detect your codebase** — reads `package.json`, framework configs, Tailwind theme, git history
+2. **Ask only what's missing** — confirms detected stack, asks for unknowns
 3. Generate **`CLAUDE.md`** — single source of truth for architecture, conventions, and design tokens
 4. Create **`.taskmaster/queue.json`** — phased roadmap with trackable tasks
 5. Create **3 project-level skills**:
@@ -17,18 +17,32 @@ When you run `/init-project` in any directory, Claude will:
 
 ## Install
 
-### Option A — Copy the file
+### Option A — Clone and copy
 
 ```bash
-mkdir -p ~/.claude/skills
-cp init-project.md ~/.claude/skills/
+git clone https://github.com/bryannegrete10/init-project-skill.git
+cp -r init-project-skill ~/.claude/skills/init-project
 ```
 
 ### Option B — Clone and symlink
 
 ```bash
 git clone https://github.com/bryannegrete10/init-project-skill.git
-ln -s "$(pwd)/init-project-skill/init-project.md" ~/.claude/skills/init-project.md
+ln -s "$(pwd)/init-project-skill" ~/.claude/skills/init-project
+```
+
+## File Structure
+
+```
+init-project/
+├── SKILL.md                          # Main skill (Claude reads this)
+├── README.md                         # This file
+├── LICENSE
+└── resources/
+    └── templates/
+        ├── continue-build.md         # Template for /continue-build skill
+        ├── audit-ui.md               # Template for /audit-ui skill
+        └── new-page.md               # Template for /new-page skill
 ```
 
 ## Usage
@@ -52,7 +66,9 @@ Claude reads CLAUDE.md + queue.json + git log → knows exactly where things sta
 ```
 ┌─────────────────────────────────────────────────┐
 │              /init-project                       │
-│  Creates the self-learning structure:            │
+│  1. Scans codebase (package.json, configs, git)  │
+│  2. Asks only what it can't detect               │
+│  3. Creates the self-learning structure:         │
 │                                                  │
 │  CLAUDE.md ─────── Architecture & conventions    │
 │  .taskmaster/ ──── Task queue & agent config     │
@@ -78,6 +94,7 @@ Claude reads CLAUDE.md + queue.json + git log → knows exactly where things sta
 
 - [Claude Code](https://claude.ai/code) CLI or Desktop App
 - Git (for tracking progress across sessions)
+- `gh` CLI (optional, for PR-aware features)
 
 ## License
 
